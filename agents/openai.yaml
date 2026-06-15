@@ -1,0 +1,4 @@
+interface:
+  display_name: "qPCR LC96 Figures"
+  short_description: "Parse LC96 qPCR and create publication figures"
+  default_prompt: "Use $qpcr-lc96-figures to parse LightCycler qPCR files and draw publication-ready figures."
