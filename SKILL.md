@@ -1,6 +1,6 @@
 ---
 name: qpcr-lc96-figures
-description: End-to-end qPCR workflow for Roche LightCycler/LC96 raw files and publication figures. Use when Codex needs to parse .lc96p/.lc96u qPCR projects, extract RDML Cq/Cp values, audit sample/target/plate metadata, compute technical-replicate means, Delta Ct, DeltaDeltaCt, fold-change/log2FC, QC flags, or create Python/matplotlib publication-ready qPCR figures such as WT/KO stage-wise bars, dose-response plots, or gene-by-day heatmaps from qPCR source files.
+description: End-to-end qPCR workflow for Roche LightCycler/LC96 raw files and publication figures. Use when Codex needs to parse .lc96p/.lc96u qPCR projects, extract RDML Cq/Cp values, audit sample/target/plate metadata, compute technical-replicate means, Delta Ct, DeltaDeltaCt, fold-change/log2FC, QC flags, classify usable versus rerun qPCR results, or create Python/matplotlib publication-ready qPCR figures such as WT/KO stage-wise bars, dose-response plots, or gene-by-day heatmaps from qPCR source files.
 ---
 
 # qPCR LC96 Figures
@@ -19,6 +19,7 @@ description: End-to-end qPCR workflow for Roche LightCycler/LC96 raw files and p
 4. Average technical replicates before biological replicate statistics.
 5. Keep flagged data visible. Do not silently remove high-Cq, Negative, or high technical-SD rows.
 6. For manuscript figures, export SVG first with editable text, plus PDF and high-DPI PNG/TIFF when possible.
+7. Keep output provenance: preserve the source directory (`rel_dir`), source file, run label, reference gene, and any label-swap correction in exported tables or notes.
 
 ## Workflow
 
@@ -35,6 +36,8 @@ Optional controls:
 ```powershell
 python scripts/parse_lc96_qpcr.py --input "path\to\qpcr" --out "path\to\outputs" --swap-label-dir "20251014 AD-B WT KO"
 ```
+
+Use multiple `--swap-label-dir` arguments if more than one source directory has known WT/KO inversion. Treat label swaps as explicit corrections and mention them in the final interpretation.
 
 Outputs:
 
@@ -73,6 +76,8 @@ python scripts/plot_stage_wtko_bars.py --analysis-dir "path\to\outputs" --rel-di
 
 The script saves source data and exports `.svg`, `.pdf`, `.png`, and `.tiff`.
 
+If `--rel-dir` does not match, inspect `file_inventory.csv` or unique `rel_dir` values in `delta_ct_all.csv`; do not guess a near match silently.
+
 ## Figure Decisions
 
 Before plotting, state:
@@ -83,6 +88,8 @@ Before plotting, state:
 - Biological vs technical replicate definition.
 - Whether FEV/high-Cq markers belong in the main panel or a supplement.
 - Whether p-value stars are exploratory or should be omitted.
+
+Use `--no-stars` when the figure is meant to emphasize effect sizes rather than exploratory significance markers.
 
 For `nature-figure` style output, use Python/matplotlib and follow that skill's backend rules when it is available.
 
